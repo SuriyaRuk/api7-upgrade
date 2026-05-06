@@ -1,0 +1,35 @@
+
+[1m============================================================[0m
+[1m  API7 Enterprise — Upgrade to 3.9.10[0m
+[1m  Namespace : api7[0m
+[1m  Action    : status[0m
+[1m============================================================[0m
+
+
+[1m[0;36m▶ Deployment Status — namespace: api7[0m
+
+[0;34m[INFO][0m  Pods:
+NAME                                        READY   STATUS    RESTARTS      AGE     IP               NODE       NOMINATED NODE   READINESS GATES
+api7-ee-3-gateway-6bd67797bd-phxmg          1/1     Running   0             3m10s   192.168.194.56   orbstack   <none>           <none>
+api7-jaeger-756f645568-hdthj                1/1     Running   0             9m54s   192.168.194.55   orbstack   <none>           <none>
+api7-postgresql-0                           1/1     Running   0             56m     192.168.194.49   orbstack   <none>           <none>
+api7-prometheus-server-7956fccbd9-r2ll7     1/1     Running   1 (17m ago)   56m     192.168.194.50   orbstack   <none>           <none>
+api7ee3-dashboard-777c678db8-tdlbc          1/1     Running   0             9m54s   192.168.194.52   orbstack   <none>           <none>
+api7ee3-developer-portal-64db75f777-4vxm6   1/1     Running   0             9m54s   192.168.194.54   orbstack   <none>           <none>
+api7ee3-dp-manager-66b5c75fc5-lqnlg         1/1     Running   0             9m54s   192.168.194.53   orbstack   <none>           <none>
+
+[0;34m[INFO][0m  Services:
+NAME                        TYPE        CLUSTER-IP        EXTERNAL-IP   PORT(S)                                                                                                                              AGE
+api7-ee-3-gateway-gateway   NodePort    192.168.194.233   <none>        80:32345/TCP,443:31079/TCP                                                                                                           27m
+api7-jaeger                 ClusterIP   192.168.194.214   <none>        5775/UDP,5778/TCP,6831/UDP,6832/UDP,9411/TCP,14250/TCP,14267/TCP,14268/TCP,4317/TCP,4318/TCP,16686/TCP,16685/TCP,8888/TCP,8889/TCP   9m54s
+api7-postgresql             ClusterIP   192.168.194.232   <none>        5432/TCP                                                                                                                             56m
+api7-postgresql-hl          ClusterIP   None              <none>        5432/TCP                                                                                                                             56m
+api7-prometheus-server      ClusterIP   192.168.194.252   <none>        9090/TCP                                                                                                                             56m
+api7ee3-dashboard           ClusterIP   192.168.194.145   <none>        7080/TCP,7443/TCP                                                                                                                    56m
+api7ee3-developer-portal    ClusterIP   192.168.194.171   <none>        4321/TCP                                                                                                                             56m
+api7ee3-dp-manager          ClusterIP   192.168.194.223   <none>        7900/TCP,7943/TCP                                                                                                                    56m
+
+[0;34m[INFO][0m  Helm releases:
+NAME             	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART          	APP VERSION
+api7-ee-3-gateway	api7     	2       	2026-05-06 15:58:04.9168 +0700 +07  	deployed	gateway-0.2.62 	3.9.10     
+api7ee3          	api7     	3       	2026-05-06 15:51:20.210097 +0700 +07	deployed	api7ee3-0.17.53	3.9.10     

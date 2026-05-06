@@ -46,3 +46,27 @@ apisix:
 [0;34m[INFO][0m  Resolving gateway chart version for appVersion=3.8.11...
 [0;32m[OK][0m    Gateway chart version resolved: 0.2.25  (appVersion=3.8.11)
 Release "api7-ee-3-gateway" does not exist. Installing it now.
+NAME: api7-ee-3-gateway
+LAST DEPLOYED: Wed May  6 15:33:33 2026
+NAMESPACE: api7
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+TEST SUITE: None
+NOTES:
+1. Get the application URL by running these commands:
+  export NODE_PORT=$(kubectl get --namespace api7 -o jsonpath="{.spec.ports[0].nodePort}" services api7-ee-3-gateway-gateway)
+  export NODE_IP=$(kubectl get nodes --namespace api7 -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+[0;32m[OK][0m    Data Plane deployed.
+[0;34m[INFO][0m  Waiting for gateway pods to be Ready (timeout 10 min)...
+pod/api7-ee-3-gateway-57fbcbfcd6-hrmcv condition met
+[0;32m[OK][0m    All gateway pods are Ready.
+[0;34m[INFO][0m  Gateway services:
+NAME                        TYPE       CLUSTER-IP        EXTERNAL-IP   PORT(S)                      AGE
+api7-ee-3-gateway-gateway   NodePort   192.168.194.233   <none>        80:32345/TCP,443:31079/TCP   8m58s
+
+[1m[0;32mSmoke test:[0m
+  kubectl -n api7 port-forward svc/api7-ee-3-gateway-gateway 9080:80
+  curl -i http://127.0.0.1:9080/    # expect HTTP 404 (no routes yet)
+

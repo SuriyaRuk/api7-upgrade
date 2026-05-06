@@ -1,0 +1,141 @@
+
+[1m============================================================[0m
+[1m  API7 Enterprise — Upgrade to 3.9.10[0m
+[1m  Namespace : api7[0m
+[1m  Action    : all[0m
+[1m============================================================[0m
+
+
+[1m[0;36m▶ Preflight Checks[0m
+[0;34m[INFO][0m  Cluster: orbstack
+[0;32m[OK][0m    Preflight passed.
+
+[1m[0;36m▶ Helm Repository[0m
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "api7" chart repository
+Update Complete. ⎈Happy Helming!⎈
+[0;32m[OK][0m    Helm repo updated.
+[0;34m[INFO][0m  Current installed releases:
+NAME             	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART          	APP VERSION
+api7-ee-3-gateway	api7     	1       	2026-05-06 15:33:33.995382 +0700 +07	deployed	gateway-0.2.25 	3.8.11     
+api7ee3          	api7     	2       	2026-05-06 15:22:51.645494 +0700 +07	deployed	api7ee3-0.17.22	3.8.11     
+
+[0;34m[INFO][0m  Current pod images:
+api7-ee-3-gateway-57fbcbfcd6-hrmcv	api7/api7-ee-3-gateway:3.8.11
+api7-postgresql-0	docker.io/api7/postgresql:15.4.0-debian-11-r45
+api7-prometheus-server-7956fccbd9-r2ll7	docker.io/api7/prometheus:2.48.1-debian-11-r0
+api7ee3-dashboard-64f878d855-rc99c	api7/api7-ee-3-integrated:v3.8.11
+api7ee3-developer-portal-665bd7f46c-d2hrp	api7/api7-ee-developer-portal:v3.8.11
+api7ee3-dp-manager-746764c997-4qn2v	api7/api7-ee-dp-manager:v3.8.11
+
+[1m[0;36m▶ Upgrade Control Plane → 3.9.10[0m
+[0;34m[INFO][0m  Resolving CP chart version for appVersion=3.9.10...
+[0;32m[OK][0m    CP chart version: 0.17.53  (appVersion=3.9.10)
+[0;34m[INFO][0m  Exporting current user values for release 'api7ee3'...
+[0;34m[INFO][0m  Saved to: /tmp/api7-cp-current-XXXXXX.yaml
+[0;34m[INFO][0m  Current values to preserve:
+dashboard_service:
+  type: ClusterIP
+postgresql:
+  builtin: true
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+[0;34m[INFO][0m  Running helm upgrade...
+Release "api7ee3" has been upgraded. Happy Helming!
+NAME: api7ee3
+LAST DEPLOYED: Wed May  6 15:51:20 2026
+NAMESPACE: api7
+STATUS: deployed
+REVISION: 3
+DESCRIPTION: Upgrade complete
+TEST SUITE: None
+NOTES:
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace api7 -l "app.kubernetes.io/name=api7ee3,app.kubernetes.io/instance=api7ee3" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace api7 $POD_NAME -o jsonpath="{.spec.containers[0].ports[1].containerPort}")
+  echo "Visit https://127.0.0.1:7443 to use your application"
+  kubectl --namespace api7 port-forward $POD_NAME 7443:$CONTAINER_PORT
+[0;32m[OK][0m    Control Plane upgraded to 3.9.10.
+[0;34m[INFO][0m  Waiting for CP pods to be Ready...
+pod/api7ee3-dashboard-777c678db8-tdlbc condition met
+pod/api7ee3-developer-portal-64db75f777-4vxm6 condition met
+pod/api7ee3-dp-manager-66b5c75fc5-lqnlg condition met
+pod/api7ee3-dp-manager-746764c997-4qn2v condition met
+[0;32m[OK][0m    All CP pods are Ready.
+NAME                                        READY   STATUS        RESTARTS   AGE
+api7ee3-dashboard-777c678db8-tdlbc          1/1     Running       0          6m41s
+api7ee3-developer-portal-64db75f777-4vxm6   1/1     Running       0          6m41s
+api7ee3-dp-manager-66b5c75fc5-lqnlg         1/1     Running       0          6m41s
+api7ee3-dp-manager-746764c997-4qn2v         1/1     Terminating   0          53m
+
+[1m[0;36m▶ Upgrade Data Plane → 3.9.10[0m
+[0;34m[INFO][0m  Resolving gateway chart version for appVersion=3.9.10...
+[0;32m[OK][0m    Gateway chart version: 0.2.62  (appVersion=3.9.10)
+[0;34m[INFO][0m  Exporting current user values for release 'api7-ee-3-gateway'...
+[0;34m[INFO][0m  Saved to: /tmp/api7-dp-current-XXXXXX.yaml
+[0;34m[INFO][0m  Image tag override:
+# Image tag override for 3.9.10
+apisix:
+  image:
+    repository: api7/api7-ee-3-gateway
+    tag: "3.9.10"
+
+[0;34m[INFO][0m  Running helm upgrade...
+Release "api7-ee-3-gateway" has been upgraded. Happy Helming!
+NAME: api7-ee-3-gateway
+LAST DEPLOYED: Wed May  6 15:58:04 2026
+NAMESPACE: api7
+STATUS: deployed
+REVISION: 2
+DESCRIPTION: Upgrade complete
+TEST SUITE: None
+NOTES:
+1. Get the application URL by running these commands:
+  export NODE_PORT=$(kubectl get --namespace api7 -o jsonpath="{.spec.ports[0].nodePort}" services api7-ee-3-gateway-gateway)
+  export NODE_IP=$(kubectl get nodes --namespace api7 -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+[0;32m[OK][0m    Data Plane upgraded to 3.9.10.
+[0;34m[INFO][0m  Waiting for gateway pods to be Ready...
+pod/api7-ee-3-gateway-57fbcbfcd6-hrmcv condition met
+pod/api7-ee-3-gateway-6bd67797bd-phxmg condition met
+[0;32m[OK][0m    All gateway pods are Ready.
+NAME                                 READY   STATUS        RESTARTS   AGE
+api7-ee-3-gateway-57fbcbfcd6-hrmcv   1/1     Terminating   0          26m
+api7-ee-3-gateway-6bd67797bd-phxmg   1/1     Running       0          98s
+
+[1m[0;32m============================================================[0m
+[1m[0;32m  ✅  API7 Enterprise upgraded to 3.9.10[0m
+[1m[0;32m============================================================[0m
+
+
+[1m[0;36m▶ Deployment Status — namespace: api7[0m
+
+[0;34m[INFO][0m  Pods:
+NAME                                        READY   STATUS        RESTARTS      AGE     IP               NODE       NOMINATED NODE   READINESS GATES
+api7-ee-3-gateway-57fbcbfcd6-hrmcv          1/1     Terminating   0             26m     192.168.194.51   orbstack   <none>           <none>
+api7-ee-3-gateway-6bd67797bd-phxmg          1/1     Running       0             98s     192.168.194.56   orbstack   <none>           <none>
+api7-jaeger-756f645568-hdthj                1/1     Running       0             8m22s   192.168.194.55   orbstack   <none>           <none>
+api7-postgresql-0                           1/1     Running       0             55m     192.168.194.49   orbstack   <none>           <none>
+api7-prometheus-server-7956fccbd9-r2ll7     1/1     Running       1 (16m ago)   55m     192.168.194.50   orbstack   <none>           <none>
+api7ee3-dashboard-777c678db8-tdlbc          1/1     Running       0             8m22s   192.168.194.52   orbstack   <none>           <none>
+api7ee3-developer-portal-64db75f777-4vxm6   1/1     Running       0             8m22s   192.168.194.54   orbstack   <none>           <none>
+api7ee3-dp-manager-66b5c75fc5-lqnlg         1/1     Running       0             8m22s   192.168.194.53   orbstack   <none>           <none>
+
+[0;34m[INFO][0m  Services:
+NAME                        TYPE        CLUSTER-IP        EXTERNAL-IP   PORT(S)                                                                                                                              AGE
+api7-ee-3-gateway-gateway   NodePort    192.168.194.233   <none>        80:32345/TCP,443:31079/TCP                                                                                                           26m
+api7-jaeger                 ClusterIP   192.168.194.214   <none>        5775/UDP,5778/TCP,6831/UDP,6832/UDP,9411/TCP,14250/TCP,14267/TCP,14268/TCP,4317/TCP,4318/TCP,16686/TCP,16685/TCP,8888/TCP,8889/TCP   8m22s
+api7-postgresql             ClusterIP   192.168.194.232   <none>        5432/TCP                                                                                                                             55m
+api7-postgresql-hl          ClusterIP   None              <none>        5432/TCP                                                                                                                             55m
+api7-prometheus-server      ClusterIP   192.168.194.252   <none>        9090/TCP                                                                                                                             55m
+api7ee3-dashboard           ClusterIP   192.168.194.145   <none>        7080/TCP,7443/TCP                                                                                                                    55m
+api7ee3-developer-portal    ClusterIP   192.168.194.171   <none>        4321/TCP                                                                                                                             55m
+api7ee3-dp-manager          ClusterIP   192.168.194.223   <none>        7900/TCP,7943/TCP                                                                                                                    55m
+
+[0;34m[INFO][0m  Helm releases:
+NAME             	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART          	APP VERSION
+api7-ee-3-gateway	api7     	2       	2026-05-06 15:58:04.9168 +0700 +07  	deployed	gateway-0.2.62 	3.9.10     
+api7ee3          	api7     	3       	2026-05-06 15:51:20.210097 +0700 +07	deployed	api7ee3-0.17.53	3.9.10     
